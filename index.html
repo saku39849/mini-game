@@ -174,17 +174,17 @@
           <button
             id="diffHardBtn"
             type="button"
-            title="深いアルファベータ探索で罠や二重脅威を仕掛ける高難度特訓モード"
+            title="読み合いと圧力をかけつつもわずかな隙や盲点があり、全力集中すればギリギリ勝てる特訓モード"
             class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-slate-950/80 border-slate-800 text-slate-300 hover:border-amber-500/50"
           >
-            <div class="text-xs font-black">ハード（勝てない特訓）</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">容赦ない攻め・防御の限界に挑戦</div>
+            <div class="text-xs font-black">ハード（ギリギリ勝てる特訓）</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">全力集中と罠でギリギリ勝利を狙う特訓</div>
           </button>
 
           <button
             id="diffImpossibleBtn"
             type="button"
-            title="手加減一切なし。反復深化・置換表・深読みで絶対に勝たせない最恐モード"
+            title="手加減一切なし。反復深化・置換表・アルファベータ枝刈りで絶対に勝たせない最恐モード"
             class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-gradient-to-r from-red-600 to-rose-700 border-red-400/60 text-white shadow-redGlow"
           >
             <div class="text-xs font-black">インポッシブル（絶対勝てない本気）</div>
@@ -412,7 +412,7 @@
         <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 text-xs text-slate-400 space-y-1.5">
           <div class="font-black text-slate-200 text-xs">ステップアップ特訓の進め方</div>
           <p>• <strong class="text-emerald-300">イージー／ノーマル：</strong>4つ並べる形や、相手の3連リーチを止める感覚を身につけましょう。</p>
-          <p>• <strong class="text-amber-300">ハード：</strong>中央（4列目）周辺を固め、2方向以上に同時リーチを作る形を練習します。</p>
+          <p>• <strong class="text-amber-300">ハード：</strong>油断すると押し切られますが、先読みと二重リーチ（罠）を丁寧に作ればギリギリ勝てます。</p>
           <p>• <strong class="text-red-400">インポッシブル：</strong>手加減なしの最深読みAI。負けた直後に下の「一手戻す」を押すと敗因を確認できます。</p>
         </div>
 
@@ -453,6 +453,7 @@
         timeBudgetMs: 120,
         blunderChance: 0.45, // 少し甘めの手を打つ確率
         blockImmediateChance: 0.78, // 即時リーチをうっかり見逃すことも少しある
+        evalNoise: 45,
         useIterativeDeepening: false,
       },
       normal: {
@@ -464,18 +465,20 @@
         timeBudgetMs: 250,
         blunderChance: 0.16,
         blockImmediateChance: 0.96,
+        evalNoise: 18,
         useIterativeDeepening: false,
       },
       hard: {
-        label: 'ハード（勝てない特訓）',
+        label: 'ハード（ギリギリ勝てる特訓）',
         shortAiName: 'AI（黄・ハード）',
-        subTitle: '― 勝てない特訓モード ―',
-        description: '深いアルファベータ探索で罠や二重脅威を仕掛ける高難度モード。油断するとすぐ押し切られます。',
-        maxDepth: 6,
-        timeBudgetMs: 550,
-        blunderChance: 0.0,
-        blockImmediateChance: 1.0,
-        useIterativeDeepening: true,
+        subTitle: '― ギリギリ勝てる特訓モード ―',
+        description: '先読みと圧力で攻めてきますが、わずかな盲点や評価の揺らぎがあり、全力集中と罠でギリギリ勝てます。',
+        maxDepth: 4,
+        timeBudgetMs: 360,
+        blunderChance: 0.08, // たまにわずかな隙を見せる
+        blockImmediateChance: 1.0, // 即時リーチはしっかり止める
+        evalNoise: 32, // 二重脅威や深い罠を見落としやすい評価ブレ
+        useIterativeDeepening: false,
       },
       impossible: {
         label: 'インポッシブル（絶対勝てない本気）',
@@ -486,6 +489,7 @@
         timeBudgetMs: 1350,
         blunderChance: 0.0,
         blockImmediateChance: 1.0,
+        evalNoise: 0,
         useIterativeDeepening: true,
       },
     };
@@ -934,7 +938,8 @@
         if (emptyCount <= 14) maxDepth += 2;
         if (emptyCount <= 10) maxDepth += 2;
       } else if (difficultyKey === 'hard') {
-        if (emptyCount <= 12) maxDepth += 2;
+        // ハードは終盤でも読みを伸ばしすぎず、ギリギリ攻略できる深さに抑える
+        if (emptyCount <= 8) maxDepth += 1;
       }
       maxDepth = Math.min(maxDepth, emptyCount);
 
@@ -951,7 +956,7 @@
           if (depth > 1 && performance.now() - startTime > cfg.timeBudgetMs) {
             break;
           }
-          const searchResult = searchRoot(board, depth, totalNodes);
+          const searchResult = searchRoot(board, depth, totalNodes, cfg.evalNoise);
           totalNodes = searchResult.nodes;
           bestMove = searchResult.col;
           bestScore = searchResult.score;
@@ -962,14 +967,14 @@
           }
         }
       } else {
-        const searchResult = searchRoot(board, maxDepth, totalNodes);
+        const searchResult = searchRoot(board, maxDepth, totalNodes, cfg.evalNoise);
         totalNodes = searchResult.nodes;
         bestMove = searchResult.col;
         bestScore = searchResult.score;
         reachedDepth = maxDepth;
       }
 
-      // イージー／ノーマルでは一定の確率で少し緩い手を選び、練習しやすくする
+      // イージー／ノーマル／ハードで設定された確率に応じて少し甘い手も混ぜる
       if (cfg.blunderChance > 0 && validCols.length > 1 && Math.random() < cfg.blunderChance) {
         const candidateCols = validCols.filter(c => {
           const r = getAvailableRow(board, c);
@@ -985,7 +990,9 @@
           score: Math.round(bestScore * 0.4),
           depth: reachedDepth,
           nodes: totalNodes,
-          reasoning: `【${cfg.label}】${chosen + 1}列目を選択。あえて少し柔軟な手を打っているので、攻めの形を作ってみましょう。`
+          reasoning: difficultyKey === 'hard'
+            ? `【${cfg.label}】${chosen + 1}列目を選択。少し重心が偏った隙があるので、チャンスを見逃さず攻め込みましょう。`
+            : `【${cfg.label}】${chosen + 1}列目を選択。あえて少し柔軟な手を打っているので、攻めの形を作ってみましょう。`
         };
       }
 
@@ -1002,7 +1009,7 @@
     /**
      * ルート階層での探索
      */
-    function searchRoot(board, depth, initialNodes) {
+    function searchRoot(board, depth, initialNodes, evalNoise = 0) {
       let nodes = initialNodes;
       let alpha = -Infinity;
       const beta = Infinity;
@@ -1017,7 +1024,10 @@
 
         board[row][col] = AI;
         nodes += 1;
-        const score = -alphaBeta(board, depth - 1, -beta, -alpha, HUMAN);
+        let score = -alphaBeta(board, depth - 1, -beta, -alpha, HUMAN);
+        if (evalNoise > 0 && Math.abs(score) < WIN_SCORE - 10000) {
+          score += (Math.random() * 2 - 1) * evalNoise;
+        }
         board[row][col] = EMPTY;
 
         if (score > bestScore) {
@@ -1029,7 +1039,7 @@
         }
       }
 
-      return { col: bestCol, score: bestScore, nodes };
+      return { col: bestCol, score: Math.round(bestScore), nodes };
     }
 
     /**
@@ -1239,6 +1249,18 @@
     function buildAiReasoning(board, col, score, difficultyKey) {
       const cfg = DIFFICULTY_CONFIG[difficultyKey];
       const tag = `【${cfg.label}】`;
+      if (difficultyKey === 'hard') {
+        if (score >= 900000) {
+          return `${tag} ${col + 1}列目から形勢を決めにかかっています。次の脅威を先読みして防ぎましょう。`;
+        }
+        if (score <= -900000) {
+          return `${tag} 厳しい攻めを受けています！${col + 1}列目でしのぎますが、畳みかければ勝機があります。`;
+        }
+        if (col === 3) {
+          return `${tag} 中央4列目を押さえて圧力をかけています。左右や斜めの連携で揺さぶりましょう。`;
+        }
+        return `${tag} ${col + 1}列目に着手。圧力をかけてきますが、二重リーチや罠を作れればギリギリ突破できます。`;
+      }
       if (score >= 900000) {
         return `${tag} ${col + 1}列目への着手から必勝ラインが確定しています。`;
       }
