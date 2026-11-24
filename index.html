@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONNECT 4 特訓道場 — ZERO MERCY AI</title>
+  <title>CONNECT 4 特訓道場 — 4段階難易度＆絶対勝てない本気AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,9 @@
             sans: ['"Noto Sans JP"', 'Inter', 'sans-serif'],
           },
           boxShadow: {
-            redGlow: '0 0 22px rgba(239, 68, 68, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.35)',
-            yellowGlow: '0 0 22px rgba(250, 204, 21, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.4)',
-            boardFrame: '0 20px 50px -12px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 255, 255, 0.18)',
+            redGlow: '0 0 24px rgba(239, 68, 68, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.35)',
+            yellowGlow: '0 0 24px rgba(250, 204, 21, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.4)',
+            boardFrame: '0 22px 54px -12px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(147, 197, 253, 0.25)',
           },
         },
       },
@@ -30,7 +30,7 @@
     @keyframes dropPiece {
       0% {
         transform: translateY(var(--drop-start, -420px)) scale(0.96);
-        opacity: 0.9;
+        opacity: 0.92;
       }
       72% {
         transform: translateY(0px) scale(1);
@@ -52,7 +52,7 @@
       }
       50% {
         transform: scale(1.08);
-        box-shadow: 0 0 0 5px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 5px rgba(255, 255, 255, 1), 0 0 42px rgba(255, 255, 255, 1);
       }
     }
 
@@ -65,16 +65,16 @@
       z-index: 20;
     }
 
-    /* コネクトフォー筐体の立体グラデーション */
+    /* コネクトフォー筐体の青系立体グラデーション */
     .connect4-cabinet {
       background: linear-gradient(165deg, #2563eb 0%, #1d4ed8 48%, #172554 100%);
-      border: 2px solid rgba(147, 197, 253, 0.35);
+      border: 2px solid rgba(147, 197, 253, 0.38);
     }
 
     /* 凹んだスロット穴 */
     .slot-well {
       background: radial-gradient(circle at 35% 30%, #0d1322 0%, #060911 75%, #03050a 100%);
-      box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), 0 1px 1px rgba(147, 197, 253, 0.16);
+      box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.92), 0 1px 1px rgba(147, 197, 253, 0.16);
     }
 
     /* 赤コマ・黄コマの質感 */
@@ -93,71 +93,102 @@
   <div class="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col gap-4 sm:gap-5">
 
     <!-- ヘッダーバー -->
-    <header class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 shadow-xl">
-      <div class="flex flex-col gap-1">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-extrabold tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">
-            手加減なしAI
-          </span>
-          <span class="text-xs font-semibold text-slate-400">7×6 コネクトフォー • 4目並べ特訓</span>
-        </div>
-        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">
-          CONNECT 4 特訓道場 <span class="text-sm sm:text-base font-bold text-amber-400">― 容赦なしの完全実戦AI ―</span>
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-400">
-          縦・横・斜めに先に4つ並べた方が勝利。AIは常に全力で最善手を狙います。列をクリックするか <kbd class="px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200">1</kbd>〜<kbd class="px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200">7</kbd> キーでコマを落としてください。
-        </p>
-      </div>
-
-      <!-- モード・タイマー・手番設定 -->
-      <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-        <!-- AI強度切替 -->
+    <header class="bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 border border-blue-500/20 rounded-2xl p-3.5 sm:p-5 flex flex-col gap-4 shadow-xl">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div class="flex flex-col gap-1">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">AI 強度</span>
-          <div class="inline-flex rounded-xl bg-slate-950 p-1 border border-slate-800" role="group" aria-label="AI強度選択">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="headerBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-extrabold tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">
+              4段階難易度特訓
+            </span>
+            <span class="text-xs font-semibold text-blue-300/80">7×6 コネクトフォー • 先に4つ並べた方が勝利</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">
+            CONNECT 4 特訓道場 <span id="headerModeSub" class="text-sm sm:text-base font-bold text-red-400">― 絶対勝てない本気AI搭載 ―</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-300/90">
+            縦・横・斜めに先に4つ並べた方が勝ち。列をタップ／クリックするか <kbd class="px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200">1</kbd>〜<kbd class="px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200">7</kbd> キーでコマを落とせます（<kbd class="px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200">Z</kbd> で一手戻す）。
+          </p>
+        </div>
+
+        <!-- タイマー・手番設定 -->
+        <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <!-- 15秒タイマー切替 -->
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">15秒制限時間</span>
             <button
-              id="modeSeriousBtn"
+              id="timerToggleBtn"
               type="button"
-              title="反復深化とアルファベータ枝刈りで容赦なく攻める標準本気モード"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-red-600 text-white shadow cursor-pointer"
+              title="1手15秒の制限時間タイマーを切り替えます"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-2 bg-slate-950/90 border-slate-800 text-slate-300 hover:border-blue-500/50 cursor-pointer"
             >
-              本気（容赦なし）
+              <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+              <span id="timerToggleLabel">OFF（無制限特訓）</span>
             </button>
+          </div>
+
+          <!-- 先攻/後攻切替 -->
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">手番設定</span>
             <button
-              id="modeKichikuBtn"
+              id="starterToggleBtn"
               type="button"
-              title="さらに深く読み切り、終盤の詰め筋まで逃さない高難度モード"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer"
+              title="あなたの先攻（赤）とAIの先攻（黄）を切り替えてリセットします"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold border transition bg-slate-950/90 border-slate-800 text-slate-200 hover:border-blue-500/50 cursor-pointer"
             >
-              鬼畜（さらに深読み）
+              先攻（赤）
             </button>
           </div>
         </div>
+      </div>
 
-        <!-- 15秒タイマー切替 -->
-        <div class="flex flex-col gap-1">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">15秒制限時間</span>
-          <button
-            id="timerToggleBtn"
-            type="button"
-            title="1手15秒の制限時間タイマーを切り替えます"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-2 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600 cursor-pointer"
-          >
-            <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-            <span id="timerToggleLabel">OFF（無制限特訓）</span>
-          </button>
+      <!-- 4段階難易度セレクター -->
+      <div class="pt-3 border-t border-slate-800/90 flex flex-col gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-black tracking-wide text-slate-200">難易度モード選択（4段階）</span>
+          <span id="difficultyDescText" class="text-xs text-amber-300 font-semibold">
+            反復深化・置換表・アルファベータ枝刈りで手加減一切なし。最も手強い実戦特訓モードです。
+          </span>
         </div>
 
-        <!-- 先攻/後攻切替 -->
-        <div class="flex flex-col gap-1">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">手番設定</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2" role="group" aria-label="4段階難易度選択">
           <button
-            id="starterToggleBtn"
+            id="diffEasyBtn"
             type="button"
-            title="あなたの先攻（赤）とAIの先攻（黄）を切り替えてリセットします"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold border transition bg-slate-950 border-slate-800 text-slate-200 hover:border-slate-600 cursor-pointer"
+            title="浅い読みと少し緩い手を含む練習モード。基本の4目並べやブロックを練習できます"
+            class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-slate-950/80 border-slate-800 text-slate-300 hover:border-emerald-500/50"
           >
-            あなた先攻（赤）
+            <div class="text-xs font-black">イージー（勝てる練習）</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">基本練習・勝ち筋づくり向け</div>
+          </button>
+
+          <button
+            id="diffNormalBtn"
+            type="button"
+            title="中程度の読みで基本の脅威を塞ぎつつ、わずかな隙も残す標準モード"
+            class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-slate-950/80 border-slate-800 text-slate-300 hover:border-sky-500/50"
+          >
+            <div class="text-xs font-black">ノーマル（実戦入門）</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">標準的な強さ・実戦感覚を養成</div>
+          </button>
+
+          <button
+            id="diffHardBtn"
+            type="button"
+            title="深いアルファベータ探索で罠や二重脅威を仕掛ける高難度特訓モード"
+            class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-slate-950/80 border-slate-800 text-slate-300 hover:border-amber-500/50"
+          >
+            <div class="text-xs font-black">ハード（勝てない特訓）</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">容赦ない攻め・防御の限界に挑戦</div>
+          </button>
+
+          <button
+            id="diffImpossibleBtn"
+            type="button"
+            title="手加減一切なし。反復深化・置換表・深読みで絶対に勝たせない最恐モード"
+            class="px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-gradient-to-r from-red-600 to-rose-700 border-red-400/60 text-white shadow-redGlow"
+          >
+            <div class="text-xs font-black">インポッシブル（絶対勝てない本気）</div>
+            <div class="text-[11px] text-red-100/90 mt-0.5">手加減ゼロ・最深部まで全力読み</div>
           </button>
         </div>
       </div>
@@ -174,10 +205,10 @@
       </div>
     </div>
 
-    <!-- メイン対戦エリア（左: ボード＆操作 / 右: 戦績・思考インサイト・棋譜） -->
+    <!-- メイン対戦エリア -->
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-      <!-- 左カラム：プレイヤー表示・Connect 4 ボード・操作エリア -->
+      <!-- 左カラム：対戦状況・7x6ボード・操作エリア -->
       <section class="lg:col-span-7 flex flex-col gap-3">
         <!-- 対戦カード（あなた vs AI） -->
         <div class="grid grid-cols-3 items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
@@ -201,7 +232,7 @@
           <!-- AI -->
           <div id="aiCard" class="flex items-center justify-end gap-2.5 p-2 rounded-xl bg-slate-950/80 border border-slate-800 transition text-right">
             <div class="min-w-0">
-              <div class="text-xs sm:text-sm font-black text-white truncate">AI（黄・本気）</div>
+              <div id="aiNameLabel" class="text-xs sm:text-sm font-black text-white truncate">AI（黄・本気）</div>
               <div id="aiTurnBadge" class="text-[11px] font-bold text-slate-500">待機中</div>
             </div>
             <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full disc-yellow shrink-0"></div>
@@ -219,7 +250,7 @@
           <div class="flex justify-center"><div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full disc-red opacity-0 transition-opacity duration-150"></div></div>
         </div>
 
-        <!-- Connect 4 ボード本体（対局終了時も中央や4目並べラインが隠れないようオーバーレイなし） -->
+        <!-- Connect 4 ボード本体（決着後も4目並べラインが一切隠れないようオーバーレイなし） -->
         <div class="relative connect4-cabinet rounded-3xl p-3 sm:p-4 shadow-boardFrame select-none">
           <!-- 7列クリック判定オーバーレイ -->
           <div id="columnClickLayer" class="absolute inset-3 sm:inset-4 z-30 grid grid-cols-7 gap-1.5 sm:gap-2.5">
@@ -237,7 +268,7 @@
           <span class="text-xs font-mono font-bold text-slate-500">1</span>
           <span class="text-xs font-mono font-bold text-slate-500">2</span>
           <span class="text-xs font-mono font-bold text-slate-500">3</span>
-          <span class="text-xs font-mono font-bold text-slate-400">4 ★</span>
+          <span class="text-xs font-mono font-bold text-blue-300">4 ★</span>
           <span class="text-xs font-mono font-bold text-slate-500">5</span>
           <span class="text-xs font-mono font-bold text-slate-500">6</span>
           <span class="text-xs font-mono font-bold text-slate-500">7</span>
@@ -245,14 +276,14 @@
 
         <!-- 操作エリア -->
         <div class="flex flex-col gap-2.5">
-          <!-- リセット＆解析表示切替バー -->
+          <!-- コントロールバー：リセット＆思考解析切替 -->
           <div class="flex flex-wrap items-center justify-between gap-2.5 bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
             <div class="flex items-center gap-2">
               <button
                 id="resetBtn"
                 type="button"
                 title="盤面をリセットして新しい対局を始めます（Rキー）"
-                class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-red-600 hover:bg-red-500 text-white shadow transition cursor-pointer"
+                class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white shadow transition cursor-pointer"
               >
                 ↻ リセット
               </button>
@@ -261,23 +292,23 @@
             <button
               id="evalVisibilityBtn"
               type="button"
-              title="AIの評価値と狙いの表示を切り替えます"
-              class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 transition cursor-pointer"
+              title="AIの思考解析（評価値・狙い・探索深度）の表示を切り替えます"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 transition cursor-pointer"
             >
-              解析表示：ON
+              思考解析：ON
             </button>
           </div>
 
-          <!-- 操作エリアの最下部：一手戻すボタン（決着後の盤面確認・敗因検証用） -->
-          <div class="flex flex-wrap items-center justify-between gap-2.5 bg-slate-900/80 border border-slate-800/90 rounded-2xl px-3.5 py-2.5">
+          <!-- 操作エリア最下部：一手戻すボタン（決着後の盤面確認・敗因検証用） -->
+          <div class="flex flex-wrap items-center justify-between gap-2.5 bg-slate-900/85 border border-blue-500/20 rounded-2xl px-3.5 py-2.5">
             <span class="text-xs text-slate-400 font-semibold">
-              敗因・分岐の検証用（<kbd class="px-1.5 py-0.5 text-[11px] bg-slate-800 border border-slate-700 rounded text-slate-200">Z</kbd> キーでも操作可能）
+              どう負けたかの確認・分岐検証（<kbd class="px-1.5 py-0.5 text-[11px] bg-slate-800 border border-slate-700 rounded text-slate-200">Z</kbd> キーでも操作可能）
             </span>
             <button
               id="undoBtn"
               type="button"
-              title="直前の自分の手とAIの応手を戻して検証します（Zキー）"
-              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none text-slate-100 border border-slate-700 transition cursor-pointer"
+              title="直前の自分の手番まで戻して敗因や分岐点を検証します（Zキー）"
+              class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-600/20 hover:bg-blue-600/35 disabled:opacity-40 disabled:pointer-events-none text-blue-200 border border-blue-400/30 transition cursor-pointer"
             >
               ↩ 一手戻す
             </button>
@@ -285,7 +316,7 @@
         </div>
       </section>
 
-      <!-- 右カラム：戦績・AI思考インサイト・着手ログ -->
+      <!-- 右カラム：戦績・思考解析・着手ログ -->
       <aside class="lg:col-span-5 flex flex-col gap-4">
 
         <!-- 戦績＆連勝トラッカー -->
@@ -295,7 +326,7 @@
             <button
               id="resetStatsBtn"
               type="button"
-              title="保存されている戦績データを初期化します"
+              title="保存されている戦績データをリセットします"
               class="text-[11px] font-bold text-slate-400 hover:text-red-400 transition cursor-pointer"
             >
               戦績リセット
@@ -329,12 +360,12 @@
           </div>
         </div>
 
-        <!-- AI 思考・評価値インサイト -->
+        <!-- AI 思考解析パネル -->
         <div id="aiInsightPanel" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-lg">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <span id="aiThinkingPulse" class="w-2.5 h-2.5 rounded-full bg-amber-400 opacity-40"></span>
-              <h2 class="text-sm font-black text-white tracking-wide">AI 思考インサイト</h2>
+              <h2 class="text-sm font-black text-white tracking-wide">思考解析</h2>
             </div>
             <span id="aiDepthBadge" class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-sky-400">
               探索深度 --
@@ -354,13 +385,13 @@
 
             <div class="flex items-center justify-between bg-slate-950/90 border border-slate-800/90 rounded-xl px-3 py-2">
               <span class="text-slate-400 font-semibold">AI視点の評価値</span>
-              <span id="aiEvalScoreText" class="font-mono font-extrabold text-emerald-300">0 (互角)</span>
+              <span id="aiEvalScoreText" class="font-mono font-extrabold text-sky-300">0 (互角)</span>
             </div>
 
             <div class="bg-slate-950/90 border border-slate-800/90 rounded-xl p-3">
               <div class="text-[11px] font-bold text-slate-400 mb-1">AIの狙い・読み筋</div>
               <p id="aiReasoningText" class="text-slate-200 leading-relaxed">
-                中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を最優先で計算します。
+                中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を計算します。
               </p>
             </div>
           </div>
@@ -377,12 +408,12 @@
           </div>
         </div>
 
-        <!-- AI撃破のための攻略ヒント -->
+        <!-- 特訓のポイント -->
         <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-4 text-xs text-slate-400 space-y-1.5">
-          <div class="font-black text-slate-200 text-xs">本気AIを攻略するための視点</div>
-          <p>• <strong class="text-slate-200">中央支配：</strong>4列目（中央）は最も多くの4連ラインに関与します。序盤から中央の主導権を握りましょう。</p>
-          <p>• <strong class="text-slate-200">段差とリーチの罠：</strong>相手のリーチを塞ぐ際、相手が「その真上のマス」に打って勝てる形を作らないよう注意が必要です。</p>
-          <p>• <strong class="text-slate-200">一手戻し活用：</strong>形勢が傾いた直後に「一手戻す」を押すと、どの手が敗着につながったか検証できます。</p>
+          <div class="font-black text-slate-200 text-xs">ステップアップ特訓の進め方</div>
+          <p>• <strong class="text-emerald-300">イージー／ノーマル：</strong>4つ並べる形や、相手の3連リーチを止める感覚を身につけましょう。</p>
+          <p>• <strong class="text-amber-300">ハード：</strong>中央（4列目）周辺を固め、2方向以上に同時リーチを作る形を練習します。</p>
+          <p>• <strong class="text-red-400">インポッシブル：</strong>手加減なしの最深読みAI。負けた直後に下の「一手戻す」を押すと敗因を確認できます。</p>
         </div>
 
       </aside>
@@ -392,13 +423,8 @@
   <script>
     /**
      * =========================================================================
-     * CONNECT 4 特訓道場 — ZERO MERCY AI
+     * CONNECT 4 特訓道場 — 4段階難易度＆絶対勝てない本気AI
      * 7列 x 6行 4目並べ Webアプリケーション
-     *
-     * 構成：
-     * 1. 盤面・手番・履歴・タイマー・戦績の状態管理
-     * 2. アルファベータ枝刈り・置換表・反復深化・戦術評価を搭載したAIエンジン
-     * 3. レスポンシブ盤面描画・アニメーション・キーボード操作
      * =========================================================================
      */
 
@@ -406,7 +432,7 @@
     const COLS = 7;
     const EMPTY = 0;
     const HUMAN = 1; // 赤（あなた）
-    const AI = 2;    // 黄（手加減なしAI）
+    const AI = 2;    // 黄（AI）
 
     const WIN_SCORE = 100000000;
     const TT_EXACT = 0;
@@ -416,11 +442,59 @@
     // 中央列優先の探索順
     const MOVE_ORDER = [3, 2, 4, 1, 5, 0, 6];
 
+    // 4段階難易度の詳細パラメータ定義
+    const DIFFICULTY_CONFIG = {
+      easy: {
+        label: 'イージー（勝てる練習）',
+        shortAiName: 'AI（黄・イージー）',
+        subTitle: '― 勝てる練習モード ―',
+        description: '浅い読みと少し緩い手を含む練習モード。基本の4目並べやリーチ防御を落ち着いて練習できます。',
+        maxDepth: 2,
+        timeBudgetMs: 120,
+        blunderChance: 0.45, // 少し甘めの手を打つ確率
+        blockImmediateChance: 0.78, // 即時リーチをうっかり見逃すことも少しある
+        useIterativeDeepening: false,
+      },
+      normal: {
+        label: 'ノーマル（実戦入門）',
+        shortAiName: 'AI（黄・ノーマル）',
+        subTitle: '― 実戦入門モード ―',
+        description: '中程度の読みで基本の脅威を塞ぎつつ、わずかな隙も残す標準的な強さです。',
+        maxDepth: 4,
+        timeBudgetMs: 250,
+        blunderChance: 0.16,
+        blockImmediateChance: 0.96,
+        useIterativeDeepening: false,
+      },
+      hard: {
+        label: 'ハード（勝てない特訓）',
+        shortAiName: 'AI（黄・ハード）',
+        subTitle: '― 勝てない特訓モード ―',
+        description: '深いアルファベータ探索で罠や二重脅威を仕掛ける高難度モード。油断するとすぐ押し切られます。',
+        maxDepth: 6,
+        timeBudgetMs: 550,
+        blunderChance: 0.0,
+        blockImmediateChance: 1.0,
+        useIterativeDeepening: true,
+      },
+      impossible: {
+        label: 'インポッシブル（絶対勝てない本気）',
+        shortAiName: 'AI（黄・本気）',
+        subTitle: '― 絶対勝てない本気AI搭載 ―',
+        description: '反復深化・置換表・アルファベータ枝刈りで手加減一切なし。最も手強い実戦特訓モードです。',
+        maxDepth: 8,
+        timeBudgetMs: 1350,
+        blunderChance: 0.0,
+        blockImmediateChance: 1.0,
+        useIterativeDeepening: true,
+      },
+    };
+
     const state = {
       board: createEmptyBoard(),
       currentTurn: HUMAN,
       humanStarts: true,
-      aiMode: 'serious', // 'serious' | 'kichiku'
+      difficulty: 'impossible', // 'easy' | 'normal' | 'hard' | 'impossible'
       gameOver: false,
       winner: null, // null | HUMAN | AI | 'DRAW'
       winningCells: [], // [{r, c}, ...]
@@ -438,7 +512,7 @@
         score: 0,
         depth: 0,
         nodes: 0,
-        reasoning: '中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を最優先で計算します。'
+        reasoning: '中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を計算します。'
       },
       stats: loadStats()
     };
@@ -446,6 +520,14 @@
     let transpositionTable = new Map();
 
     const dom = {
+      headerBadge: document.getElementById('headerBadge'),
+      headerModeSub: document.getElementById('headerModeSub'),
+      difficultyDescText: document.getElementById('difficultyDescText'),
+      diffEasyBtn: document.getElementById('diffEasyBtn'),
+      diffNormalBtn: document.getElementById('diffNormalBtn'),
+      diffHardBtn: document.getElementById('diffHardBtn'),
+      diffImpossibleBtn: document.getElementById('diffImpossibleBtn'),
+      aiNameLabel: document.getElementById('aiNameLabel'),
       boardGrid: document.getElementById('boardGrid'),
       columnClickLayer: document.getElementById('columnClickLayer'),
       hoverPreviewRow: document.getElementById('hoverPreviewRow'),
@@ -457,8 +539,6 @@
       aiTurnBadge: document.getElementById('aiTurnBadge'),
       undoBtn: document.getElementById('undoBtn'),
       resetBtn: document.getElementById('resetBtn'),
-      modeSeriousBtn: document.getElementById('modeSeriousBtn'),
-      modeKichikuBtn: document.getElementById('modeKichikuBtn'),
       timerToggleBtn: document.getElementById('timerToggleBtn'),
       timerStatusDot: document.getElementById('timerStatusDot'),
       timerToggleLabel: document.getElementById('timerToggleLabel'),
@@ -485,7 +565,7 @@
     };
 
     /**
-     * 空の 6x7 盤面を生成する（row=0 が最上段、row=5 が最下段）
+     * 空の 6x7 盤面を生成する
      */
     function createEmptyBoard() {
       return Array.from({ length: ROWS }, () => Array(COLS).fill(EMPTY));
@@ -503,7 +583,7 @@
      */
     function loadStats() {
       try {
-        const raw = localStorage.getItem('connect4_zero_mercy_stats_v1');
+        const raw = localStorage.getItem('connect4_dojo_4diff_stats_v1');
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
@@ -515,7 +595,7 @@
           };
         }
       } catch (e) {
-        // ストレージ非対応環境でも安全に続行
+        // ストレージ利用不可時も安全に動作
       }
       return { games: 0, wins: 0, losses: 0, draws: 0, streak: 0 };
     }
@@ -525,14 +605,14 @@
      */
     function saveStats() {
       try {
-        localStorage.setItem('connect4_zero_mercy_stats_v1', JSON.stringify(state.stats));
+        localStorage.setItem('connect4_dojo_4diff_stats_v1', JSON.stringify(state.stats));
       } catch (e) {
         // 無視
       }
     }
 
     /**
-     * ボードのDOM（42スロットと7列クリック領域）を初期化
+     * ボードDOM（42スロットと7列クリック領域）を初期化
      */
     function initBoardDOM() {
       dom.boardGrid.innerHTML = '';
@@ -552,7 +632,7 @@
         const colBtn = document.createElement('button');
         colBtn.type = 'button';
         colBtn.setAttribute('aria-label', `${c + 1}列目にコマを落とす`);
-        colBtn.className = 'h-full w-full rounded-xl transition hover:bg-white/5 active:bg-white/10 focus:outline-none cursor-pointer';
+        colBtn.className = 'h-full w-full rounded-xl transition hover:bg-white/10 active:bg-white/15 focus:outline-none cursor-pointer';
         colBtn.dataset.col = String(c);
 
         colBtn.addEventListener('mouseenter', () => setPreviewCol(c));
@@ -583,10 +663,10 @@
         if (disc) {
           if (i === col) {
             disc.classList.remove('opacity-0');
-            disc.classList.add('opacity-90', 'scale-105');
+            disc.classList.add('opacity-95', 'scale-105');
           } else {
             disc.classList.add('opacity-0');
-            disc.classList.remove('opacity-90', 'scale-105');
+            disc.classList.remove('opacity-95', 'scale-105');
           }
         }
       }
@@ -601,7 +681,7 @@
         const disc = children[i]?.firstElementChild;
         if (disc) {
           disc.classList.add('opacity-0');
-          disc.classList.remove('opacity-90', 'scale-105');
+          disc.classList.remove('opacity-95', 'scale-105');
         }
       }
     }
@@ -672,7 +752,7 @@
     }
 
     /**
-     * プレイヤーの列クリック処理
+     * プレイヤーの列クリック/タップ処理
      */
     function handleHumanColumnClick(col) {
       if (state.gameOver || state.isAiThinking || state.currentTurn !== HUMAN) return;
@@ -757,6 +837,7 @@
       state.isAiThinking = true;
       renderStatusAndInsight();
 
+      const delay = state.difficulty === 'easy' ? 180 : 140;
       state.aiTimeoutId = setTimeout(() => {
         if (state.gameOver || state.currentTurn !== AI) {
           state.isAiThinking = false;
@@ -764,7 +845,7 @@
           return;
         }
 
-        const aiResult = computeBestMoveForAI(state.board, state.aiMode);
+        const aiResult = computeBestMoveForAI(state.board, state.difficulty);
         state.lastAiInsight = {
           col: aiResult.col,
           score: aiResult.score,
@@ -778,21 +859,23 @@
         if (targetRow !== -1) {
           executeMove(targetRow, aiResult.col, AI, false);
         }
-      }, 140);
+      }, delay);
     }
 
     /**
      * =========================================================================
-     * 手加減なしAIエンジン（Minimax + Alpha-Beta + 反復深化 + 置換表）
+     * 4段階難易度対応 AI エンジン
      * =========================================================================
      */
-    function computeBestMoveForAI(board, mode) {
+    function computeBestMoveForAI(board, difficultyKey) {
+      const cfg = DIFFICULTY_CONFIG[difficultyKey] || DIFFICULTY_CONFIG.impossible;
       const validCols = MOVE_ORDER.filter(c => getAvailableRow(board, c) !== -1);
+
       if (validCols.length === 0) {
         return { col: 3, score: 0, depth: 0, nodes: 0, reasoning: '打てる手がありません。' };
       }
 
-      // 1. 即時勝利手があれば即決
+      // 1. 即時勝利手があれば即決（イージーでも勝ち筋があれば決める）
       for (const col of validCols) {
         const r = getAvailableRow(board, col);
         board[r][col] = AI;
@@ -804,12 +887,12 @@
             score: WIN_SCORE,
             depth: 1,
             nodes: 1,
-            reasoning: `${col + 1}列目に落として4目並べ完成。容赦なく仕留めます。`
+            reasoning: `${col + 1}列目に落として4目並べ完成！勝利を確定させました。`
           };
         }
       }
 
-      // 2. 相手の即時勝利手（リーチ）があれば必ずブロック
+      // 2. 相手の即時勝利手（リーチ）へのブロック判定
       const immediateThreats = [];
       for (const col of validCols) {
         const r = getAvailableRow(board, col);
@@ -820,42 +903,39 @@
           immediateThreats.push(col);
         }
       }
-      if (immediateThreats.length > 0) {
+
+      if (immediateThreats.length > 0 && Math.random() < cfg.blockImmediateChance) {
         const blockCol = immediateThreats[0];
         return {
           col: blockCol,
           score: 50000,
           depth: 1,
           nodes: immediateThreats.length,
-          reasoning: `あなたの${blockCol + 1}列目の勝ち筋を完全に遮断します。甘く見ないでください。`
+          reasoning: `あなたの${blockCol + 1}列目の勝ち筋をブロックしました。`
         };
       }
 
       const emptyCount = countEmptyCells(board);
       const placedCount = ROWS * COLS - emptyCount;
 
-      if (placedCount === 0) {
-        return {
-          col: 3,
-          score: 120,
-          depth: 1,
-          nodes: 1,
-          reasoning: '初手は中央4列目。盤面全体のライン数（21通り中13通り）を制圧する最善の起点です。'
-        };
-      }
-      if (placedCount === 1 && getAvailableRow(board, 3) === ROWS - 1) {
+      // インポッシブル／ハードの初手は中央4列目を優先
+      if ((difficultyKey === 'impossible' || difficultyKey === 'hard') && placedCount <= 1 && getAvailableRow(board, 3) !== -1) {
         return {
           col: 3,
           score: 140,
           depth: 1,
           nodes: 1,
-          reasoning: '中央4列目を即座に確保し、主導権を奪います。'
+          reasoning: `【${cfg.label}】中央4列目を確保し、縦・横・斜めの複数ラインを制圧します。`
         };
       }
 
-      let maxDepth = mode === 'kichiku' ? 8 : 7;
-      if (emptyCount <= 14) maxDepth += 2;
-      if (emptyCount <= 10) maxDepth += 2;
+      let maxDepth = cfg.maxDepth;
+      if (difficultyKey === 'impossible') {
+        if (emptyCount <= 14) maxDepth += 2;
+        if (emptyCount <= 10) maxDepth += 2;
+      } else if (difficultyKey === 'hard') {
+        if (emptyCount <= 12) maxDepth += 2;
+      }
       maxDepth = Math.min(maxDepth, emptyCount);
 
       transpositionTable = new Map();
@@ -865,28 +945,51 @@
       let reachedDepth = 1;
 
       const startTime = performance.now();
-      const timeBudgetMs = mode === 'kichiku' ? 1400 : 850;
 
-      for (let depth = 1; depth <= maxDepth; depth++) {
-        if (depth > 1 && performance.now() - startTime > timeBudgetMs) {
-          break;
-        }
-
-        const searchResult = searchRoot(board, depth, totalNodes);
-        totalNodes = searchResult.nodes;
-
-        if (!searchResult.aborted) {
+      if (cfg.useIterativeDeepening) {
+        for (let depth = 1; depth <= maxDepth; depth++) {
+          if (depth > 1 && performance.now() - startTime > cfg.timeBudgetMs) {
+            break;
+          }
+          const searchResult = searchRoot(board, depth, totalNodes);
+          totalNodes = searchResult.nodes;
           bestMove = searchResult.col;
           bestScore = searchResult.score;
           reachedDepth = depth;
-        }
 
-        if (bestScore >= WIN_SCORE - 1000) {
-          break;
+          if (bestScore >= WIN_SCORE - 1000) {
+            break;
+          }
         }
+      } else {
+        const searchResult = searchRoot(board, maxDepth, totalNodes);
+        totalNodes = searchResult.nodes;
+        bestMove = searchResult.col;
+        bestScore = searchResult.score;
+        reachedDepth = maxDepth;
       }
 
-      const reasoning = buildAiReasoning(board, bestMove, bestScore, mode);
+      // イージー／ノーマルでは一定の確率で少し緩い手を選び、練習しやすくする
+      if (cfg.blunderChance > 0 && validCols.length > 1 && Math.random() < cfg.blunderChance) {
+        const candidateCols = validCols.filter(c => {
+          const r = getAvailableRow(board, c);
+          board[r][c] = HUMAN;
+          const humanWinsNext = checkWinner(board)?.winner === HUMAN;
+          board[r][c] = EMPTY;
+          return !humanWinsNext;
+        });
+        const pool = candidateCols.length > 0 ? candidateCols : validCols;
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+        return {
+          col: chosen,
+          score: Math.round(bestScore * 0.4),
+          depth: reachedDepth,
+          nodes: totalNodes,
+          reasoning: `【${cfg.label}】${chosen + 1}列目を選択。あえて少し柔軟な手を打っているので、攻めの形を作ってみましょう。`
+        };
+      }
+
+      const reasoning = buildAiReasoning(board, bestMove, bestScore, difficultyKey);
       return {
         col: bestMove,
         score: bestScore,
@@ -914,7 +1017,7 @@
 
         board[row][col] = AI;
         nodes += 1;
-        const score = -alphaBeta(board, depth - 1, -beta, -alpha, HUMAN, nodes);
+        const score = -alphaBeta(board, depth - 1, -beta, -alpha, HUMAN);
         board[row][col] = EMPTY;
 
         if (score > bestScore) {
@@ -926,13 +1029,13 @@
         }
       }
 
-      return { col: bestCol, score: bestScore, nodes, aborted: false };
+      return { col: bestCol, score: bestScore, nodes };
     }
 
     /**
      * ネガマックス形式の Alpha-Beta 探索 + 置換表
      */
-    function alphaBeta(board, depth, alpha, beta, turnPlayer, nodesRef) {
+    function alphaBeta(board, depth, alpha, beta, turnPlayer) {
       const alphaOrig = alpha;
       const hashKey = computeBoardHash(board, turnPlayer);
       const ttEntry = transpositionTable.get(hashKey);
@@ -948,7 +1051,7 @@
       if (outcome) {
         if (outcome.winner === 'DRAW') return 0;
         const wonByCurrent = outcome.winner === turnPlayer;
-        return wonByCurrent ? (WIN_SCORE - (10 - depth) * 1000) : -(WIN_SCORE - (10 - depth) * 1000);
+        return wonByCurrent ? (WIN_SCORE - (12 - depth) * 1000) : -(WIN_SCORE - (12 - depth) * 1000);
       }
 
       if (depth === 0) {
@@ -965,7 +1068,7 @@
         if (row === -1) continue;
 
         board[row][col] = turnPlayer;
-        const score = -alphaBeta(board, depth - 1, -beta, -alpha, nextPlayer, nodesRef);
+        const score = -alphaBeta(board, depth - 1, -beta, -alpha, nextPlayer);
         board[row][col] = EMPTY;
 
         if (score > maxScore) {
@@ -1133,25 +1236,26 @@
     /**
      * AIの狙い・解説文を生成
      */
-    function buildAiReasoning(board, col, score, mode) {
-      const modeTag = mode === 'kichiku' ? '【鬼畜深読み】' : '【本気モード】';
+    function buildAiReasoning(board, col, score, difficultyKey) {
+      const cfg = DIFFICULTY_CONFIG[difficultyKey];
+      const tag = `【${cfg.label}】`;
       if (score >= 900000) {
-        return `${modeTag} ${col + 1}列目への着手から必勝ライン（強制勝利）が確定しています。`;
+        return `${tag} ${col + 1}列目への着手から必勝ラインが確定しています。`;
       }
       if (score <= -900000) {
-        return `${modeTag} 厳しい局面ですが、${col + 1}列目で粘りつつ相手のミスを待ちます。`;
+        return `${tag} 厳しい局面ですが、${col + 1}列目で粘り強く対応します。`;
       }
       if (col === 3) {
-        return `${modeTag} 中央4列目を選択。縦・横・斜めの複数ラインを同時に伸ばし、次の攻め手を広げます。`;
+        return `${tag} 中央4列目を選択。縦・横・斜めの複数ラインを同時に伸ばし、次の攻め手を広げます。`;
       }
       if (score > 120) {
-        return `${modeTag} ${col + 1}列目に打って有利な形勢を拡大。相手の防御が追いつかない二重の脅威を狙います。`;
+        return `${tag} ${col + 1}列目に打って有利な形勢を拡大。相手の防御が追いつかない二重の脅威を狙います。`;
       }
-      return `${modeTag} ${col + 1}列目を選択。あなたの連を作らせず、中央付近の主導権とライン効率を最適化しました。`;
+      return `${tag} ${col + 1}列目を選択。あなたの連を作らせず、ライン効率と中央の主導権を計算しました。`;
     }
 
     /**
-     * 一手戻す（Undo）処理
+     * 一手戻す（Undo）処理：自分の直前の手番まで戻して敗因・分岐を検証できるようにする
      */
     function handleUndoMove() {
       if (state.isAiThinking || state.history.length === 0) return;
@@ -1232,7 +1336,7 @@
         score: 0,
         depth: 0,
         nodes: 0,
-        reasoning: '中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を最優先で計算します。'
+        reasoning: '中央列（4列目）を軸に、縦・横・斜めの同時脅威（ダブルスレット）と相手のリーチ阻止を計算します。'
       };
 
       renderAll(false);
@@ -1242,6 +1346,44 @@
       } else {
         startTurnTimerIfNeeded();
       }
+    }
+
+    /**
+     * 4段階難易度ボタンの見た目と説明を更新
+     */
+    function updateDifficultyUI() {
+      const cfg = DIFFICULTY_CONFIG[state.difficulty];
+      dom.difficultyDescText.textContent = cfg.description;
+      dom.headerModeSub.textContent = cfg.subTitle;
+      dom.aiNameLabel.textContent = cfg.shortAiName;
+
+      const baseInactive = 'px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-slate-950/80 border-slate-800 text-slate-300';
+
+      dom.diffEasyBtn.className = state.difficulty === 'easy'
+        ? 'px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-emerald-600/25 border-emerald-400 text-emerald-100 shadow'
+        : `${baseInactive} hover:border-emerald-500/50`;
+
+      dom.diffNormalBtn.className = state.difficulty === 'normal'
+        ? 'px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-blue-600/30 border-blue-400 text-blue-100 shadow'
+        : `${baseInactive} hover:border-blue-500/50`;
+
+      dom.diffHardBtn.className = state.difficulty === 'hard'
+        ? 'px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-amber-500/25 border-amber-400 text-amber-100 shadow'
+        : `${baseInactive} hover:border-amber-500/50`;
+
+      dom.diffImpossibleBtn.className = state.difficulty === 'impossible'
+        ? 'px-3.5 py-2.5 rounded-xl text-left border transition cursor-pointer bg-gradient-to-r from-red-600 to-rose-700 border-red-400/70 text-white shadow-redGlow'
+        : `${baseInactive} hover:border-red-500/50`;
+    }
+
+    /**
+     * 難易度変更ハンドラ
+     */
+    function selectDifficulty(nextDifficulty) {
+      if (!DIFFICULTY_CONFIG[nextDifficulty]) return;
+      state.difficulty = nextDifficulty;
+      updateDifficultyUI();
+      resetMatch();
     }
 
     /**
@@ -1314,6 +1456,7 @@
      * 画面全体の描画更新
      */
     function renderAll(animateLastMove = false) {
+      updateDifficultyUI();
       renderBoardCells(animateLastMove);
       renderStatusAndInsight();
       renderStats();
@@ -1365,7 +1508,7 @@
     }
 
     /**
-     * 手番表示・ステータス・AI思考インサイトの更新
+     * 手番表示・ステータス・思考解析の更新
      */
     function renderStatusAndInsight() {
       const currentMoveNum = state.moveLog.length + 1;
@@ -1378,17 +1521,17 @@
           dom.statusHeadline.textContent = 'あなたの勝利！';
           dom.statusHeadline.className = 'text-xs sm:text-sm font-black text-emerald-400 leading-tight mt-0.5';
         } else if (state.winner === AI) {
-          dom.statusHeadline.textContent = 'AI の勝利';
+          dom.statusHeadline.textContent = 'AI の勝利（4目完成）';
           dom.statusHeadline.className = 'text-xs sm:text-sm font-black text-red-400 leading-tight mt-0.5';
         } else {
           dom.statusHeadline.textContent = '引き分け（満杯）';
           dom.statusHeadline.className = 'text-xs sm:text-sm font-black text-amber-300 leading-tight mt-0.5';
         }
       } else if (state.isAiThinking) {
-        dom.statusHeadline.textContent = 'AI が深読み中...';
+        dom.statusHeadline.textContent = 'AI が思考中...';
         dom.statusHeadline.className = 'text-xs sm:text-sm font-black text-amber-300 leading-tight mt-0.5';
       } else if (state.currentTurn === HUMAN) {
-        dom.statusHeadline.textContent = 'あなたの番（列をクリック）';
+        dom.statusHeadline.textContent = 'あなたの番（列をタップ）';
         dom.statusHeadline.className = 'text-xs sm:text-sm font-black text-red-400 leading-tight mt-0.5';
       } else {
         dom.statusHeadline.textContent = 'AI の手番';
@@ -1429,7 +1572,7 @@
           : '探索深度 --';
 
         dom.aiStateText.textContent = state.isAiThinking
-          ? '最善手を計算中（手加減なし）'
+          ? `${DIFFICULTY_CONFIG[state.difficulty].label}で計算中`
           : state.gameOver
             ? '対局完了'
             : 'あなたの着手待ち';
@@ -1530,19 +1673,10 @@
       dom.resetBtn.addEventListener('click', resetMatch);
       dom.undoBtn.addEventListener('click', handleUndoMove);
 
-      dom.modeSeriousBtn.addEventListener('click', () => {
-        state.aiMode = 'serious';
-        dom.modeSeriousBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-red-600 text-white shadow cursor-pointer';
-        dom.modeKichikuBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer';
-        renderStatusAndInsight();
-      });
-
-      dom.modeKichikuBtn.addEventListener('click', () => {
-        state.aiMode = 'kichiku';
-        dom.modeKichikuBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-gradient-to-r from-red-600 to-amber-500 text-white shadow cursor-pointer';
-        dom.modeSeriousBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white cursor-pointer';
-        renderStatusAndInsight();
-      });
+      dom.diffEasyBtn.addEventListener('click', () => selectDifficulty('easy'));
+      dom.diffNormalBtn.addEventListener('click', () => selectDifficulty('normal'));
+      dom.diffHardBtn.addEventListener('click', () => selectDifficulty('hard'));
+      dom.diffImpossibleBtn.addEventListener('click', () => selectDifficulty('impossible'));
 
       dom.timerToggleBtn.addEventListener('click', () => {
         state.timerEnabled = !state.timerEnabled;
@@ -1562,14 +1696,14 @@
       dom.starterToggleBtn.addEventListener('click', () => {
         state.humanStarts = !state.humanStarts;
         dom.starterToggleBtn.textContent = state.humanStarts
-          ? 'あなた先攻（赤）'
-          : 'AI先攻（黄・容赦なし）';
+          ? '先攻（赤）'
+          : '後攻（黄・AI先攻）';
         resetMatch();
       });
 
       dom.evalVisibilityBtn.addEventListener('click', () => {
         state.showEval = !state.showEval;
-        dom.evalVisibilityBtn.textContent = state.showEval ? '解析表示：ON' : '解析表示：OFF';
+        dom.evalVisibilityBtn.textContent = state.showEval ? '思考解析：ON' : '思考解析：OFF';
         renderStatusAndInsight();
       });
 
